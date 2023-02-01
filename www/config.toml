@@ -1,8 +1,9 @@
-baseurl = "https://username.github.io"
+baseurl = "https://www.overworld.org"
 DefaultContentLanguage = "en"
-title = "Beautiful Hugo"
+title = "Stephen Lennon"
 themesDir = "../themes"
 theme = "beautifulhugo"
+
 pygmentsStyle = "trac"
 pygmentsUseClasses = true
 pygmentsCodeFences = true
@@ -13,15 +14,15 @@ pygmentsCodefencesGuessSyntax = true
 #googleAnalytics = "XXX"
 
 [Params]
-#  homeTitle = "Beautiful Hugo Theme" # Set a different text for the header on the home page
-  subtitle = "Build a beautiful and simple website in minutes"
-  mainSections = ["post","posts"]
-  logo = "img/avatar-icon.png" # Expecting square dimensions
-  favicon = "img/favicon.ico"
+  homeTitle = "Stephen Lennon"
+  subtitle = "An Epigenetic Odyssey"
+  mainSections = ["post"]
+  logo = "images/coloureye.png"
+  favicon = "imgages/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false
   rss = true
-  comments = true
+  comments = false
   readingTime = true
   wordCount = true
   useHLJS = true
@@ -45,16 +46,16 @@ pygmentsCodefencesGuessSyntax = true
 
 [Author]
   # Set only your "username" for default hosts and full URLs otherwise (e.g., "https://MyGitLab.org/username")
-  name = "Some Person"
-  website = "yourwebsite.com"
-  email = "youremail@domain.com"
+  name = "Stephen"
+  website = "overworld.org"
+  email = "Work it out!"
   facebook = "username"
-  github = "username"
+  github = "splennon"
   gitlab = "username"
   bitbucket = "username"
   twitter = "username"
   reddit = "username"
-  linkedin = "username"
+  linkedin = "stephen.p.lennon"
   xing = "username"
   stackoverflow = "users/XXXXXXX/username"
   snapchat = "username"
@@ -77,39 +78,41 @@ pygmentsCodefencesGuessSyntax = true
   strava = "userid"
 
 [[menu.main]]
+    name = "Contact"
+    url = "contact/"
+    weight = 2
+
+[[menu.main]]
     name = "Blog"
-    url = ""
+    url = "blog/"
     weight = 1
 
 [[menu.main]]
-    name = "About"
-    url = "page/about/"
-    weight = 3
+    parent = "Blog"
+    name = "By Date"
+    url = "tags/blog"
+    weight = 1
 
 [[menu.main]]
-    identifier = "samples"
-    name = "Samples"
-    weight = 2
-
-[[menu.main]]
-    parent = "samples"
-    name = "Big Image Sample"
+    parent = "Blog"
+    name = "Food"
     url = "post/2017-03-07-bigimg-sample"
-    weight = 1
-
-[[menu.main]]
-    parent = "samples"
-    name = "Math Sample"
-    url = "post/2017-03-05-math-sample"
     weight = 2
 
 [[menu.main]]
-    parent = "samples"
-    name = "Code Sample"
-    url = "post/2016-03-08-code-sample"
+    parent = "Blog"
+    name = "Photography"
+    url = "tags/comfort-food"
     weight = 3
 
 [[menu.main]]
-    name = "Tags"
+    parent = "Blog"
+    name = "Writing"
+    url = "tags/water"
+    weight = 4
+
+[[menu.main]]
+    parent = "Blog"
+    name = "Browse by Tag"
     url = "tags"
-    weight = 3
+    weight = 5

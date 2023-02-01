@@ -1,0 +1,13 @@
+{
+  "name": "Stephen Lennon",
+  "short_name": "Blog and Sharings",
+  "description": "An Epigenetic Odyssey",
+  "start_url": "/",
+  "background_color": "#FFFFFF",
+  "theme_color": "#43B3AE",
+  "icons": [
+    { "src": "/images/icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/images/icon-256.png", "type": "image/png", "sizes": "256x256" },
+    { "src": "/images/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}
