@@ -15,6 +15,10 @@
 
 /* --- General --- */
 
+.navbar-custom.top-nav-short {
+  background-color:#032F9A !important;
+  background:none;
+}
 body {
   font-family: 'Fira Sans Extra Condensed', sans-serif;
   font-size: 18px;
@@ -23,9 +27,11 @@ body {
   color: #404040;
   position: relative;
   background: #FFF;
-  display: flex;
+  /* display: flex; */
+  display:flex;
   flex-flow: column;
-  height: 100vh;
+  /* height: 10vh; */
+
 }
 @media (prefers-color-scheme: dark) {
   body {
@@ -101,6 +107,25 @@ hr.small {
 .main-content {
   padding-top: 80px;
 }
+
+.navbar-default {
+  background: none;
+  border: none !important;
+}
+
+.hero-img {
+  /* z-index: 4; */
+  display: block;
+  /* position:relative; */
+  height:550px;
+  width:100%;
+  background-image: url(../images/IMG_20180618_200857.jpg);
+  background-size: cover;
+  background-position: top;
+  margin-bottom: -50px;
+  /* flex-grow: 1; */
+  margin-bottom: -50px;
+}
 @media only screen and (min-width: 768px) {
   .main-content {
     padding-top: 130px;
@@ -174,7 +199,7 @@ figure:not(.dark) img, img.white {
 /* --- Navbar --- */
 
 .navbar-custom {
-  background: #43B3AE;
+  /* background: #032F9A; */
   border-bottom: 1px solid #333333;
   font-family: 'Hind Madurai', sans-serif;
   font-weight: 200;
@@ -195,7 +220,7 @@ figure:not(.dark) img, img.white {
 .navbar-custom .navbar-brand,
 .navbar-custom .nav li a {
   font-weight: 600;
-  color: #404040;
+  color: white;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -242,7 +267,10 @@ figure:not(.dark) img, img.white {
 
 @media only screen and (min-width: 768px) {
   .navbar-custom {
-    padding: 20px 0;
+    top: 0;
+    position: sticky;
+    /* z-index: 1; */
+    /* padding: 16px; */
     -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
     -moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
     transition: background .5s ease-in-out,padding .5s ease-in-out;
@@ -322,14 +350,14 @@ figure:not(.dark) img, img.white {
   display: block;
   padding: 10px;
   padding-left: 30px;
-  background: #f5f5f5;
+  background: #333;
   text-decoration: none !important;
-  border-width: 0 1px 1px 1px;
+
   font-weight: normal;
 }
 @media only screen and (max-width: 767px) {
   .navbar-custom .nav .navlinks-container.show-children {
-    background: #eee;
+    background: #333;
   }
   .navbar-custom .nav .navlinks-container.show-children .navlinks-children {
     display: block;
@@ -340,7 +368,7 @@ figure:not(.dark) img, img.white {
     text-align: center;
   }
   .navbar-custom .nav .navlinks-container:hover {
-    background: #eee;
+    background: #333;
   }
   .navbar-custom .nav .navlinks-container:hover .navlinks-children {
     display: block;
@@ -359,7 +387,7 @@ figure:not(.dark) img, img.white {
     background: #666;
   }
   .navbar-custom .nav .navlinks-container .navlinks-children a {
-    border: 1px solid #AAA;
+
   }
   .navbar-custom .nav .navlinks-container .navlinks-children a {
     background: #444;
@@ -656,7 +684,7 @@ footer .theme-by {
 }
 @media only screen and (min-width: 768px) {
   .intro-header {
-    margin-top: 130px;
+    /* margin-top: 500px; */
   }
   .intro-header.big-img {
     margin-top: 910px;  /* Full navbar is small navbar + 20px padding on each side when expanded */

@@ -1,7 +1,7 @@
 baseurl = "https://www.overworld.org"
 DefaultContentLanguage = "en"
 title = "Stephen Lennon"
-themesDir = "../themes"
+themesDir = "./themes"
 theme = "beautifulhugo"
 
 pygmentsStyle = "trac"
