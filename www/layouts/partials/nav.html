@@ -1,4 +1,5 @@
-<nav class="navbar navbar-default navbar-custom">
+<div class="hero-img"></div>
+<nav class="navbar navbar-default navbar-fixed-top navbar-custom">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
@@ -9,7 +10,6 @@
       </button>
       <a class="navbar-brand" href="{{ "" | absLangURL }}">{{ .Site.Title }}</a>
     </div>
-
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-right">
         {{ range .Site.Menus.main.ByWeight }}
@@ -92,5 +92,4 @@
         </div>
       </div>
     </div>
-  </div>
 {{ end }}
