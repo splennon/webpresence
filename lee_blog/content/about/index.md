@@ -1,12 +1,12 @@
 +++
 title = "About"
 description = "About Joseph Lee, Author"
-date = "2023-04-04"
+date = "2023-02-01"
 author = "Joseph Lee"
 draft = false
-header_img = "img/004.jpg"
+header_img = "img/003.jpg"
 aliases = ["contact"]
-toc = true
+toc = false
 tags = []
 categories = []
 series = []

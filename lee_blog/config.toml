@@ -1,4 +1,4 @@
-baseURL = "http://localhost:1313/"
+baseURL = "https://www.josephlee.de/"
 title = "Joseph Lee"
 
 theme = "puppet"
@@ -54,32 +54,32 @@ url = "/books/"
 weight = 10
 
 [[menu.main]]
+identifier = "posts"
+name = "Posts"
+url = "/posts/"
+weight = 20
+
+[[menu.main]]
 identifier = "stories"
 name = "Stories"
 url = "/stories/"
-weight = 20
+weight = 30
 
 [[menu.main]]
 identifier = "about"
 name = "About"
 url = "/about/"
-weight = 50
-
-[[menu.main]]
-identifier = "contact"
-name = "Contact"
-url = "/contact/"
-weight = 100
+weight = 40
 
 [[menu.main]]
 identifier = "amazon"
 name = "Amazon"
 url = "https://www.amazon.com/stores/Joseph-Lee/author/B0BWL6WBGP"
-weight = 200
+weight = 50
 
 [params]
 author = "Joseph Lee"
-description = "A simple and clean theme for Hugo"
+description = "I write erotic gay fiction for your pleasure."
 keywords = "blog,author,personal"
 img_home = "img/005.jpg"
 img_404 = "img/010.jpg"
@@ -94,7 +94,7 @@ enable = true
 gravatarEmail = ""
 # Overwritten by your gravatar image if `gravatarEmail` is filled
 avatar = "img/author.png"
-bio = "I write pornos"
+bio = "I write high quality erotic fiction for your pleasure."
 
 [params.social]
 twitter = "johndoe"
