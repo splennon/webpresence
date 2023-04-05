@@ -1,5 +1,5 @@
 +++
 title = "Posts"
-author = "Hugo Authors"
-header_img = "img/013.jpg"
+author = "Joseph Lee"
+header_img = "img/004.jpg"
 +++
