@@ -27,6 +27,6 @@ toc = true
 ## Houseshare
 
 
-Isaac is looking for his break in the city, but first he needs a place to call home. He?s been disappointed, sniggered at, outbid and rained on and he?s starting to lose hope. Then out of nowhere he meets an old friend who points him to a vacancy in a house share of four young professional men on the sedate and unassuming Bloomfield Road where his luck takes a turn for the better. It all seems too perfect though ... perhaps it is?
+Isaac is looking for his break in the city, but first he needs a place to call home. He's been disappointed, sniggered at, outbid and rained on and he's starting to lose hope. Then out of nowhere he meets an old friend who points him to a vacancy in a house share of four young professional men on the sedate and unassuming Bloomfield Road where his luck takes a turn for the better. It all seems too perfect though ... perhaps it is?
 
 {{< imgwithsize "/books/houseshare_cover_preview.jpg" 230 300 >}}

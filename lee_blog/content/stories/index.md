@@ -29,6 +29,6 @@ resources:
   name: houseshare_cover
 ---
 
-For the moment I'm busy with book projects! Follow me on Twitter, Facebook or Instagram to get updated when stories are published. Check back soon to find stories in full for free, or view my [published books in the Recalcitrant Boys series](/books)
+For the moment I'm busy with book projects! Follow me on Twitter to get updated when stories are published. Check back soon to find stories in full for free, or view my [published books in the Recalcitrant Boys series](/books)
 
 <!--more-->
