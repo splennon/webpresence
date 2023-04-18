@@ -8,7 +8,7 @@ categories = []
 comment = true
 date = "2023-04-05"
 draft = false
-header_img = "img/016.jpg"
+header_img = "img/020.jpg"
 series = []
 short = true
 tags = [
@@ -20,6 +20,7 @@ tags = [
   "watersports"
 ]
 toc = true
+images = [ "https://www.josephlee.de/img/020_card.jpg" ]
 +++
 
 <!--more-->
