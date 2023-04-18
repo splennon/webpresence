@@ -20,6 +20,7 @@ tags = [
   "watersports"
 ]
 toc = true
+images = [ "https://www.josephlee.de/img/002_card.jpg" ]
 +++
 
 <!--more-->

@@ -43,11 +43,11 @@ Milo owes a debt of gratitude to his father for making him the man he is today. 
 
 The circumstances of Justin’s life have changed. Moving to the country has proved more peaceful than he had wanted and he misses the clubs, parties, friends and play dates he left behind in the city. Then one fateful day a walk in the woods presents an arousing surprise that might put him back on track for more excitement than he can handle.
 
-{{< imgwithsize "door_cover_preview.jpg" 230 300 >}}
+[{{< imgwithsize "door_cover_preview.jpg" 230 300 >}}](https://read.amazon.co.uk/kp/embed?asin=B0BWFQPYB6&preview=newtab&linkCode=kpe&ref_=cm_sw_r_kb_dp_W6X7P519BMD3QGX3PFBF&tag=josephlee090-20)
 
 ## Houseshare
 
 
 Isaac is looking for his break in the city, but first he needs a place to call home. He’s been disappointed, sniggered at, outbid and rained on and he’s starting to lose hope. Then out of nowhere he meets an old friend who points him to a vacancy in a house share of four young professional men on the sedate and unassuming Bloomfield Road where his luck takes a turn for the better. It all seems too perfect though ... perhaps it is?
 
-{{< imgwithsize "houseshare_cover_preview.jpg" 230 300 >}}
+[{{< imgwithsize "houseshare_cover_preview.jpg" 230 300 >}}](https://www.amazon.com/dp/B0BWBRTGSX?&linkCode=ll1&tag=josephlee090-20&linkId=7a580ab1324a6de7dbbd4b2486369160&language=en_US&ref_=as_li_ss_tl)
