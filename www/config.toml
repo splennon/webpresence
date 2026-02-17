@@ -11,7 +11,7 @@ pygmentsCodefencesGuessSyntax = true
 #pygmentsUseClassic = true
 #pygmentOptions = "linenos=inline"
 #disqusShortname = "XXX"
-#googleAnalytics = "XXX"
+googleAnalytics = "G-DZND5G3ECG"
 
 [Params]
   homeTitle = "Stephen Lennon"
@@ -44,7 +44,7 @@ pygmentsCodefencesGuessSyntax = true
 #  src = "img/hexagon.jpg"
 #  desc = "Hexagon"
 
-[Author]
+[Params.Author]
   # Set only your "username" for default hosts and full URLs otherwise (e.g., "https://MyGitLab.org/username")
   name = "Stephen"
   website = "overworld.org"
