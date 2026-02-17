@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duolingo BBQ Quest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #58cc02 0%, #45a302 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background 1s ease;
+        }
+
+        body.finale-active {
+            background: black;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #58cc02;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .question-number {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .character {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .character.side-by-side {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-align: left;
+        }
+
+        .character-img {
+            font-size: 120px;
+            margin-bottom: 10px;
+        }
+
+        .character.side-by-side .character-img {
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+        .character-img img {
+            width: 150px;
+            height: auto;
+        }
+
+        .character-img.multiple-characters {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .character-img.multiple-characters img {
+            width: 100px;
+            height: auto;
+        }
+
+        .hoverable {
+            position: relative;
+            cursor: help;
+        }
+
+        .hover-popup {
+            display: none;
+            position: absolute;
+            background: #fffff0;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            min-width: 200px;
+            max-width: 300px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #3c3c3c;
+        }
+
+        .hover-popup:after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #fffff0;
+        }
+
+        .hoverable:hover .hover-popup {
+            display: block;
+        }
+
+        .debug-skip {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 10px;
+            color: #1cb0f6;
+            text-decoration: none;
+            z-index: 9999;
+            cursor: pointer;
+        }
+
+        .debug-skip:hover {
+            color: #58cc02;
+            text-decoration: underline;
+        }
+
+        .speech-bubble {
+            background: #f7f7f7;
+            border-radius: 15px;
+            padding: 15px 20px;
+            position: relative;
+            display: inline-block;
+            margin: 0 auto;
+            max-width: 90%;
+        }
+
+        .character.side-by-side .speech-bubble {
+            margin: 0;
+            max-width: none;
+            flex: 1;
+        }
+
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #f7f7f7;
+        }
+
+        .character.side-by-side .speech-bubble:before {
+            top: 50%;
+            left: -10px;
+            transform: translateY(-50%);
+            border-left: none;
+            border-right: 10px solid #f7f7f7;
+            border-bottom: 10px solid transparent;
+            border-top: 10px solid transparent;
+        }
+
+        .replay-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            vertical-align: middle;
+            transition: transform 0.2s;
+        }
+
+        .replay-button img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .replay-button:hover {
+            transform: scale(1.1);
+        }
+
+        .speech-bubble-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .character.side-by-side .speech-bubble-container {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+        }
+
+        @media (max-width: 900px) {
+            .character.side-by-side {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .character.side-by-side .character-img {
+                margin-bottom: 10px;
+            }
+
+            .character.side-by-side .speech-bubble-container {
+                justify-content: center;
+            }
+
+            .character.side-by-side .speech-bubble:before {
+                top: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-top: none;
+                border-bottom: 10px solid #f7f7f7;
+            }
+        }
+
+        .question {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3c3c3c;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 15px;
+            padding: 18px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            color: #3c3c3c;
+        }
+
+        .option:hover {
+            border-color: #58cc02;
+            background: #f7f7f7;
+        }
+
+        .option.selected {
+            border-color: #1cb0f6;
+            background: #ddf4ff;
+        }
+
+        .option.correct {
+            border-color: #58cc02;
+            background: #d7ffb8;
+        }
+
+        .option.incorrect {
+            border-color: #ff4b4b;
+            background: #ffc1c1;
+        }
+
+        .option:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .check-button {
+            background: #58cc02;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-button:hover {
+            background: #45a302;
+            transform: scale(1.02);
+        }
+
+        .check-button:disabled {
+            background: #e5e5e5;
+            color: #afafaf;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .result-banner {
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            display: none;
+        }
+
+        .result-banner.correct {
+            background: #d7ffb8;
+            color: #58cc02;
+            display: block;
+        }
+
+        .result-banner.incorrect {
+            background: #ffc1c1;
+            color: #ff4b4b;
+            display: block;
+        }
+
+        .finale-screen {
+            text-align: center;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: black;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+        }
+
+        .finale-screen video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            transition: opacity 1s ease;
+        }
+
+        .finale-screen video.fade-video {
+            opacity: 0;
+        }
+
+        .finale-screen img {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            opacity: 0;
+            transform: scale(0.1) rotate(-180deg);
+            transition: none;
+            filter: drop-shadow(0 0 30px rgba(255, 165, 0, 0));
+        }
+
+        .finale-screen img.show {
+            opacity: 1;
+            animation: dramaticBurgerEntrance 2s ease-out forwards;
+        }
+
+        @keyframes dramaticBurgerEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.1) rotate(-180deg);
+                filter: drop-shadow(0 0 30px rgba(255, 165, 0, 0));
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.3) rotate(10deg);
+                filter: drop-shadow(0 0 50px rgba(255, 165, 0, 0.8));
+            }
+            70% {
+                transform: scale(0.9) rotate(-5deg);
+            }
+            85% {
+                transform: scale(1.1) rotate(2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(0 0 40px rgba(255, 165, 0, 0.6));
+            }
+        }
+
+        @keyframes burgerPulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: drop-shadow(0 0 40px rgba(255, 165, 0, 0.6));
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 60px rgba(255, 165, 0, 0.9));
+            }
+        }
+
+        .finale-screen img.pulse {
+            animation: burgerPulse 2s ease-in-out infinite;
+        }
+
+        .celebration {
+            text-align: center;
+            padding: 40px 30px;
+        }
+
+        .celebration-emoji {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .celebration h2 {
+            color: #58cc02;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .celebration p {
+            font-size: 20px;
+            color: #3c3c3c;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .invitation-card {
+            background: linear-gradient(135deg, #ff9a00 0%, #ff4b4b 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 5px 20px rgba(255, 75, 75, 0.3);
+        }
+
+        .invitation-card h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .invitation-details {
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .rsvp-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: left;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .rsvp-form h3 {
+            color: #58cc02;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .date-info {
+            font-size: 16px;
+            color: #3c3c3c;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .date-info .date-entry {
+            margin-bottom: 20px;
+        }
+
+        .date-info .date-entry:last-of-type {
+            margin-bottom: 20px;
+        }
+
+        .date-info .address {
+            margin-top: 5px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e5e5e5;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .checkbox-item:hover {
+            border: 2px solid #58cc02;
+            padding: 10px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #58cc02;
+        }
+
+        .checkbox-item label {
+            font-size: 18px;
+            font-weight: 600;
+            color: #3c3c3c;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            color: #3c3c3c;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #58cc02;
+        }
+
+        .submit-button {
+            background: #58cc02;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-button:hover {
+            background: #45a302;
+            transform: scale(1.02);
+        }
+
+        .menu-button {
+            background: #ff9a00;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-button:hover {
+            background: #ff8000;
+            transform: scale(1.05);
+        }
+
+        .calendar-button {
+            display: block;
+            background: #1cb0f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin: 10px auto 0;
+            width: fit-content;
+        }
+
+        .calendar-button:hover {
+            background: #0095d9;
+            transform: scale(1.05);
+        }
+
+        .calendar-button::before {
+            content: '📅 ';
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-out {
+            animation: fadeOut 1s forwards;
+        }
+
+        .fade-in {
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .opening-screen {
+            padding: 60px 30px;
+            text-align: center;
+        }
+
+        .opening-character {
+            margin-bottom: 30px;
+        }
+
+        .opening-character video {
+            width: 200px;
+            height: auto;
+        }
+
+        .invitation-text {
+            margin-bottom: 40px;
+        }
+
+        .invitation-text .english {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3c3c3c;
+            margin-bottom: 15px;
+        }
+
+        .invitation-text .means {
+            font-size: 18px;
+            color: #afafaf;
+            font-style: italic;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .invitation-text .german {
+            font-size: 28px;
+            font-weight: 600;
+            color: #58cc02;
+        }
+
+        .begin-button {
+            background: #58cc02;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 20px 50px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(88, 204, 2, 0.3);
+        }
+
+        .begin-button:hover {
+            background: #45a302;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="opening-screen" id="openingScreen">
+            <div class="opening-character">
+                <video autoplay loop muted playsinline>
+                    <source src="videos/DuoWalking.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="invitation-text">
+                <div class="german">Du bist zu einer Grillparty eingeladen.</div>
+                <div class="means">means</div>
+                <div class="english">You are Invited to a Barbeque!</div>
+            </div>
+            <button class="begin-button" id="beginButton">Begin Challenge</button>
+            <a href="#" class="debug-skip" id="debugSkipOpening">Skip to RSVP</a>
+        </div>
+
+        <div class="header hidden" id="header">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="question-number" id="questionNumber">Question 1 of 5</div>
+        </div>
+
+        <div class="content hidden" id="gameContent">
+            <div class="character">
+                <div class="character-img" id="characterImg">🦉</div>
+                <div class="speech-bubble-container">
+                    <button class="replay-button hidden" id="replayButton">
+                        <img src="images/play.png" alt="Replay">
+                    </button>
+                    <div class="speech-bubble" id="speechBubble">Let's get started!</div>
+                </div>
+            </div>
+
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <button class="check-button" id="checkButton" disabled>CHECK</button>
+            <div class="result-banner" id="resultBanner"></div>
+            <a href="#" class="debug-skip" id="debugSkip">Skip to RSVP</a>
+        </div>
+
+        <div class="finale-screen hidden" id="finaleScreen">
+            <video id="finaleVideo" playsinline>
+                <source src="videos/DuoFinale.mp4" type="video/mp4">
+            </video>
+            <img id="burgerImage" src="images/burger.jpeg" alt="Burger">
+        </div>
+
+        <div class="celebration hidden" id="celebration">
+            <div class="celebration-emoji">🎉</div>
+            <h2>Congratulations!</h2>
+            <p>You've completed all the challenges!</p>
+
+            <button class="menu-button" id="menuButton">Preview the Menu!</button>
+
+            <div class="rsvp-form">
+                <h3>RSVP YES!</h3>
+                <div class="date-info">
+                    <p>You have a choice of two dates, and you may choose either or both.</p>
+                    <div class="date-entry">
+                        <strong>Leather BBQ:</strong> 18 July, from 2pm
+                        <a href="LeatherBBQ.ics" class="calendar-button">Add to Calendar</a>
+                    </div>
+                    <div class="date-entry">
+                        <strong>Friends and Family BBQ:</strong> 25 July, from 2pm
+                        <a href="SummerBBQ.ics" class="calendar-button">Add to Calendar</a>
+                    </div>
+                    <div class="address">15B Sandyford Park, Sandyford Village, D18 FX65.</div>
+                </div>
+
+                <div id="errorMessage" style="display: none; color: #ff4b4b; font-weight: 600; margin-bottom: 15px; text-align: center;"></div>
+
+                <form id="rsvpForm">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="leatherBBQ" name="leatherBBQ" value="Leather BBQ - 18 July">
+                            <label for="leatherBBQ">Leather Men of Ireland: 18 July 2026</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="familyBBQ" name="familyBBQ" value="Friends and Family BBQ - 25 July">
+                            <label for="familyBBQ">Friends and Family: 25 July 2026</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guestName">Name</label>
+                        <input type="text" id="guestName" name="guestName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="extraGuests" id="guestsLabel">Number of guests</label>
+                        <input type="text" id="extraGuests" name="extraGuests">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dietary" id="dietaryLabel">Special/dietary requirements</label>
+                        <input type="text" id="dietary" name="dietary">
+                        <div id="dietaryNote" style="font-size: 14px; color: #666; margin-top: 8px; line-height: 1.5;"></div>
+                    </div>
+
+                    <button type="submit" class="submit-button">Submit RSVP YES!</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // TEXT CONFIGURATION - Edit all text here
+        // ============================================
+        const TEXT_CONFIG = {
+            opening: {
+                german: 'Du bist zu einer Grillparty eingeladen!',
+                means: 'means',
+                english: 'You are Invited to a Barbeque!',
+                buttonText: 'Begin Challenge'
+            },
+            questions: [
+                {
+                    speech: 'Es gibt Burger und Käsekuchen auf der Grillparty',
+                    hoverText: 'There will be burgers and cheesecake at the barbeque',
+                    options: ['There will be burgers at the barbeque', 'There will be cheesecake at the barbeque', 'I can bring the bear to the barbeque']
+                },
+                {
+                    speech: 'Ich kann einen Freund zum Grillen mitbringen',
+                    hoverText: 'I can bring a friend along to the barbequeue',
+                    options: ['Friends are not permitted at the barbeque', 'I can bring a friend along', 'The bear is tall and always friendly']
+                },
+                {
+                    speech: 'Die Kuh ist groß und sehr lecker. Es gibt keine Veganer beim Grillen',
+                    hoverText: 'The cow is big and tasty. There are no vegans at the barbequeue',
+                    options: ['Cows are delicious', 'The barbeque will be at night', 'Unannounced vegans are very welcome']
+                },
+                {
+                    speech: 'Wann beginnt die Grillparty?',
+                    hoverText: 'When does the barbeque start?',
+                    options: ['The barbeque has already happened', 'Saturday 18 July 2026', 'Saturday 25 July 2026']
+                }
+            ],
+            celebration: {
+                title: 'Congratulations!',
+                subtitle: 'You\'ve completed all the challenges!',
+                menuButton: 'Preview the Menu!'
+            },
+            rsvp: {
+                title: 'RSVP YES!',
+                dateInfo: 'You have a choice of two dates You may choose either or both',
+                leatherBBQ: 'Leather Men of Ireland Barbeque: 18 July',
+                familyBBQ: 'Friends and Family Barbeque: 25 July',
+                nameLabel: 'Name',
+                guestsLabel: 'Number of guests',
+                guestsPlaceholder: 'Total number of people to count for this RSVP',   
+                dietaryLabel: 'Special or dietary requirements',
+                dietaryPlaceholder: 'Allergies, dietary or other requirements',
+                dietaryNote: 'Delicious ovo-vegetarian soya and beetroot patties are available, so don\'t be afraid to RSVP veg :) For other requirements we\'ll do everything we can (Even for the vegans!)',
+                submitButton: 'Submit RSVP',
+                errorMessage: 'You need to accept one or both dates!'
+            },
+            email: {
+                to: 'stephen.p.lennon@gmail.com',
+                subjectBoth: 'RSVP for BOTH (YAY!)',
+                subjectLeather: 'RSVP for Leather',
+                subjectFamily: 'RSVP for Friends and Family',
+                subjectDefault: 'BBQ RSVP'
+            },
+            menu: {
+                title: 'Sample Menu',
+                subtitle: 'Subject to Change',
+                sections: {
+                    main: {
+                        title: 'Main',
+                        items: [
+                            { name: 'Half pound of Irish beef on a brioche bun' },
+                            { name: 'Beetroot and soya medallion on a brioche bun', description: '(Ovo-vegetarian. Please RSVP)' }
+                        ]
+                    },
+                    toppings: {
+                        title: 'Accoutrements',
+                        items: [
+                            { name: 'Peanut Butter and Carmelised Onions', description: 'with side of Plum Jam' },
+                            { name: 'Brie, Pickled Onion and Cucumber, Carmelised Onions', description: 'with side of Jalapeño Jam' },
+                            { name: 'Roasted Red Pepper, Cucumber Raita', description: 'with side of Jam and Sauce' },
+                            { name: 'The O\'Connell Bridge Classic', description: 'Mayo, lettuce, tomato, pickle, ketchup, carmelised onion' }
+                        ]
+                    },
+                    sides: {
+                        title: 'Sides',
+                        items: [
+                            { name: 'Assorted salads' }
+                        ]
+                    },
+                    sauces: {
+                        title: 'Sauces',
+                        items: [
+                            { name: 'Jalapeño Jam' },
+                            { name: 'Plum Jam' },
+                            { name: 'Harissa Mayo with Walnuts' },
+                            { name: 'Curry Mayo with Apple and Drunken Raisins' }
+                        ]
+                    },
+                    desserts: {
+                        title: 'Sweets',
+                        items: [
+                            { name: 'Lemon Cheesecake with Fruit Jus', description: '(First come, first served)' }
+                        ]
+                    }
+                }
+            },
+            debug: {
+                skipLink: 'Skip to RSVP'
+            }
+        };
+        // ============================================
+
+        const openingScreen = document.getElementById('openingScreen');
+        const header = document.getElementById('header');
+        const beginButton = document.getElementById('beginButton');
+
+        const questions = [
+            {
+                character: 'images/Characters/Bear.png',
+                isImage: true,
+                sideBySide: true,
+                audio: 'sounds/Burgers.mp3',
+                speech: TEXT_CONFIG.questions[0].speech,
+                textHover: TEXT_CONFIG.questions[0].hoverText,
+                question: '',
+                options: TEXT_CONFIG.questions[0].options,
+                correct: [0, 1],
+                noTimeout: true
+            },
+            {
+                characters: ['images/Characters/Nina.png', 'images/Characters/Linh.png', 'images/Characters/Oscar.png'],
+                isImage: true,
+                sideBySide: true,
+                audio: 'sounds/Friend.mp3',
+                speech: TEXT_CONFIG.questions[1].speech,
+                textHover: TEXT_CONFIG.questions[1].hoverText,
+                question: '',
+                options: TEXT_CONFIG.questions[1].options,
+                correct: 1,
+                noTimeout: true
+            },
+            {
+                character: 'images/Characters/Abbey.png',
+                isImage: true,
+                sideBySide: true,
+                audio: 'sounds/Delicious.mp3',
+                speech: TEXT_CONFIG.questions[2].speech,
+                textHover: TEXT_CONFIG.questions[2].hoverText,
+                question: '',
+                options: TEXT_CONFIG.questions[2].options,
+                correct: 0,
+                noTimeout: true
+            },
+            {
+                character: 'images/Characters/Debbie.png',
+                isImage: true,
+                sideBySide: true,
+                audio: 'sounds/When.mp3',
+                speech: TEXT_CONFIG.questions[3].speech,
+                textHover: TEXT_CONFIG.questions[3].hoverText,
+                question: '',
+                options: TEXT_CONFIG.questions[3].options,
+                correct: [1, 2],
+                correctSound: 'sounds/Happy.mp3',
+                noTimeout: true
+            }
+        ];
+
+        let currentQuestion = 0;
+        let selectedOption = null;
+        let autoSolveTimer = null;
+
+        const progressFill = document.getElementById('progressFill');
+        const questionNumber = document.getElementById('questionNumber');
+        const characterImg = document.getElementById('characterImg');
+        const speechBubble = document.getElementById('speechBubble');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const checkButton = document.getElementById('checkButton');
+        const resultBanner = document.getElementById('resultBanner');
+        const gameContent = document.getElementById('gameContent');
+        const celebration = document.getElementById('celebration');
+        const finaleScreen = document.getElementById('finaleScreen');
+        const finaleVideo = document.getElementById('finaleVideo');
+        const burgerImage = document.getElementById('burgerImage');
+        const replayButton = document.getElementById('replayButton');
+        const debugSkip = document.getElementById('debugSkip');
+        const debugSkipOpening = document.getElementById('debugSkipOpening');
+
+        let currentAudio = null;
+
+        // Initialize text from TEXT_CONFIG
+        document.getElementById('guestsLabel').textContent = TEXT_CONFIG.rsvp.guestsLabel;
+        document.getElementById('extraGuests').placeholder = TEXT_CONFIG.rsvp.guestsPlaceholder;
+        document.getElementById('dietaryLabel').textContent = TEXT_CONFIG.rsvp.dietaryLabel;
+        document.getElementById('dietary').placeholder = TEXT_CONFIG.rsvp.dietaryPlaceholder;
+        document.getElementById('dietaryNote').textContent = TEXT_CONFIG.rsvp.dietaryNote;
+
+        // Debug skip to RSVP function
+        function skipToRSVP() {
+            // Stop any playing audio
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+
+            // Hide current screens
+            openingScreen.classList.add('hidden');
+            gameContent.classList.add('hidden');
+            header.classList.add('hidden');
+            finaleScreen.classList.add('hidden');
+
+            // Show RSVP screen
+            document.body.classList.remove('finale-active');
+            celebration.classList.remove('hidden');
+        }
+
+        // Debug skip to RSVP from questions
+        debugSkip.addEventListener('click', (e) => {
+            e.preventDefault();
+            skipToRSVP();
+        });
+
+        // Debug skip to RSVP from opening screen
+        debugSkipOpening.addEventListener('click', (e) => {
+            e.preventDefault();
+            skipToRSVP();
+        });
+
+        // Menu preview button
+        const menuButton = document.getElementById('menuButton');
+        menuButton.addEventListener('click', () => {
+            const menuHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Menu du BBQ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
+
+        body {
+            background: #f5f5dc;
+            font-family: 'Cormorant Garamond', serif;
+            padding: 40px 20px;
+            margin: 0;
+            color: #2c1810;
+        }
+
+        .menu-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border: 3px double #8b7355;
+        }
+
+        .menu-header {
+            text-align: center;
+            border-bottom: 2px solid #8b7355;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        .menu-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            font-style: italic;
+            color: #2c1810;
+        }
+
+        .menu-header .subtitle {
+            font-size: 20px;
+            font-style: italic;
+            color: #6b5d52;
+        }
+
+        .menu-section {
+            margin-bottom: 40px;
+        }
+
+        .menu-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c1810;
+        }
+
+        .menu-item {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dotted #d4c4b0;
+            text-align: center;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #2c1810;
+            text-align: center;
+        }
+
+        .item-description {
+            font-size: 18px;
+            font-style: italic;
+            color: #6b5d52;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .flourish {
+            text-align: center;
+            font-size: 24px;
+            color: #8b7355;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <div class="menu-header">
+            <h1>${TEXT_CONFIG.menu.title}</h1>
+            <div class="subtitle">${TEXT_CONFIG.menu.subtitle}</div>
+        </div>
+
+        <div class="menu-section">
+            <h2>${TEXT_CONFIG.menu.sections.main.title}</h2>
+            <div class="flourish">❦</div>
+            ${TEXT_CONFIG.menu.sections.main.items.map((item, i) => `
+                ${i === 1 ? '<div style="text-align: center; font-style: italic; font-size: 20px; margin: 20px 0; color: #8b7355;">or</div>' : ''}
+                <div class="menu-item">
+                    <div class="item-name">${item.name}</div>
+                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+
+        <div class="flourish">❦ ❦ ❦</div>
+
+        <div class="menu-section">
+            <h2>${TEXT_CONFIG.menu.sections.toppings.title}</h2>
+            ${TEXT_CONFIG.menu.sections.toppings.items.map(item => `
+                <div class="menu-item">
+                    <div class="item-name">${item.name}</div>
+                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+
+        <div class="flourish">❦ ❦ ❦</div>
+
+        <div class="menu-section">
+            <h2>${TEXT_CONFIG.menu.sections.sides.title}</h2>
+            ${TEXT_CONFIG.menu.sections.sides.items.map(item => `
+                <div class="menu-item">
+                    <div class="item-name">${item.name}</div>
+                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+
+        <div class="flourish">❦ ❦ ❦</div>
+
+        <div class="menu-section">
+            <h2>${TEXT_CONFIG.menu.sections.sauces.title}</h2>
+            ${TEXT_CONFIG.menu.sections.sauces.items.map(item => `
+                <div class="menu-item">
+                    <div class="item-name">${item.name}</div>
+                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+
+        <div class="flourish">❦ ❦ ❦</div>
+
+        <div class="menu-section">
+            <h2>${TEXT_CONFIG.menu.sections.desserts.title}</h2>
+            ${TEXT_CONFIG.menu.sections.desserts.items.map(item => `
+                <div class="menu-item">
+                    <div class="item-name">${item.name}</div>
+                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+    </div>
+</body>
+</html>
+            `;
+
+            // Open menu in new window
+            const menuWindow = window.open('', '_blank', 'width=900,height=800,scrollbars=yes');
+            menuWindow.document.write(menuHTML);
+            menuWindow.document.close();
+        });
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressFill.style.width = progress + '%';
+            questionNumber.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+        }
+
+        function loadQuestion(autoPlayAudio = true) {
+            const q = questions[currentQuestion];
+
+            // Handle character image(s) or emoji
+            if (q.characters && Array.isArray(q.characters)) {
+                // Multiple characters
+                characterImg.innerHTML = q.characters.map(src =>
+                    `<div class="hoverable">
+                        <img src="${src}" alt="Character">
+                        <div class="hover-popup">${q.textHover || 'text here'}</div>
+                    </div>`
+                ).join('');
+                characterImg.classList.add('multiple-characters');
+            } else if (q.isImage && q.character) {
+                // Single character image
+                characterImg.innerHTML = `
+                    <div class="hoverable">
+                        <img src="${q.character}" alt="Character">
+                        <div class="hover-popup">${q.textHover || 'text here'}</div>
+                    </div>`;
+                characterImg.classList.remove('multiple-characters');
+            } else {
+                // Emoji character
+                characterImg.textContent = q.character;
+                characterImg.classList.remove('multiple-characters');
+            }
+
+            // Handle side-by-side layout
+            const characterDiv = document.querySelector('.character');
+            if (q.sideBySide) {
+                characterDiv.classList.add('side-by-side');
+            } else {
+                characterDiv.classList.remove('side-by-side');
+            }
+
+            // Add hover to speech bubble
+            if (q.textHover) {
+                speechBubble.innerHTML = `
+                    <div class="hoverable" style="display: inline;">
+                        ${q.speech}
+                        <div class="hover-popup">${q.textHover || 'text here'}</div>
+                    </div>`;
+            } else {
+                speechBubble.innerHTML = `
+                    <div class="hoverable" style="display: inline;">
+                        ${q.speech}
+                        <div class="hover-popup">text here</div>
+                    </div>`;
+            }
+            questionEl.textContent = q.question;
+
+            // Play audio if specified and show replay button
+            if (q.audio) {
+                currentAudio = new Audio(q.audio);
+                if (autoPlayAudio) {
+                    currentAudio.play().catch(err => console.log('Audio play failed:', err));
+                }
+                replayButton.classList.remove('hidden');
+            } else {
+                currentAudio = null;
+                replayButton.classList.add('hidden');
+            }
+
+            optionsEl.innerHTML = '';
+            q.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.onclick = () => selectOption(index);
+                optionsEl.appendChild(optionEl);
+            });
+
+            checkButton.disabled = true;
+            checkButton.textContent = 'CHECK';
+            resultBanner.style.display = 'none';
+            resultBanner.className = 'result-banner';
+            selectedOption = null;
+
+            // Hide check button for questions that auto-progress
+            if (q.noTimeout) {
+                checkButton.style.display = 'none';
+            } else {
+                checkButton.style.display = 'block';
+            }
+
+            updateProgress();
+
+            // Auto-solve after 8 seconds if no answer selected (unless disabled)
+            if (!q.noTimeout) {
+                autoSolveTimer = setTimeout(() => {
+                    if (selectedOption === null) {
+                        autoSolve();
+                    }
+                }, 8000);
+            }
+        }
+
+        function selectOption(index) {
+            if (checkButton.textContent === 'CONTINUE') return;
+
+            clearTimeout(autoSolveTimer);
+            selectedOption = index;
+
+            const options = optionsEl.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+
+            checkButton.disabled = false;
+
+            // Auto-progress for questions with noTimeout flag
+            const q = questions[currentQuestion];
+            if (q.noTimeout) {
+                setTimeout(() => {
+                    showCorrectAndContinue();
+                }, 500);
+            }
+        }
+
+        function autoSolve() {
+            const correctIndex = questions[currentQuestion].correct;
+            selectedOption = correctIndex;
+            
+            const options = optionsEl.querySelectorAll('.option');
+            options[correctIndex].classList.add('selected');
+            
+            speechBubble.textContent = 'Let me help you with this one! ✨';
+            
+            setTimeout(() => {
+                checkAnswer();
+            }, 1000);
+        }
+
+        function showCorrectAndContinue() {
+            const q = questions[currentQuestion];
+            const options = optionsEl.querySelectorAll('.option');
+
+            options.forEach(opt => opt.onclick = null);
+
+            // STOP ALL AUDIO immediately
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+
+            // Check if answer is correct (for array-based correct answers)
+            const isCorrect = Array.isArray(q.correct) ? q.correct.includes(selectedOption) : selectedOption === q.correct;
+
+            if (isCorrect) {
+                options[selectedOption].classList.add('correct');
+                resultBanner.className = 'result-banner correct';
+                resultBanner.textContent = '✓ Awesome! That\'s correct!';
+
+                // Play custom correct sound if specified, otherwise play Correct.mp3
+                const soundPath = q.correctSound || 'sounds/Correct.mp3';
+                const correctSound = new Audio(soundPath);
+                correctSound.play().catch(err => console.log('Correct sound play failed:', err));
+            } else {
+                options[selectedOption].classList.add('incorrect');
+                resultBanner.className = 'result-banner incorrect';
+                resultBanner.textContent = '✗ Oops! Try to think about what the sentence means.';
+
+                // Play Wrong.mp3
+                const wrongSound = new Audio('sounds/Wrong.mp3');
+                wrongSound.play().catch(err => console.log('Wrong.mp3 play failed:', err));
+            }
+
+            // Wait, then fade to next question
+            setTimeout(() => {
+                // Fade out current content
+                gameContent.classList.add('fade-out');
+                header.classList.add('fade-out');
+
+                setTimeout(() => {
+                    gameContent.classList.remove('fade-out');
+                    header.classList.remove('fade-out');
+
+                    currentQuestion++;
+                    if (currentQuestion < questions.length) {
+                        // Fade in next question
+                        gameContent.classList.add('fade-in');
+                        header.classList.add('fade-in');
+                        loadQuestion(true); // Auto-play next question's audio
+
+                        // Clean up fade-in class
+                        setTimeout(() => {
+                            gameContent.classList.remove('fade-in');
+                            header.classList.remove('fade-in');
+                        }, 1000);
+                    } else {
+                        // Show finale screen
+                        showFinaleScreen();
+                    }
+                }, 1000);
+            }, 1500);
+        }
+
+        function checkAnswer() {
+            clearTimeout(autoSolveTimer);
+            const q = questions[currentQuestion];
+            const options = optionsEl.querySelectorAll('.option');
+
+            options.forEach(opt => opt.onclick = null);
+
+            // Check if all answers are correct
+            if (q.correct === 'all') {
+                options[selectedOption].classList.add('correct');
+                resultBanner.className = 'result-banner correct';
+                resultBanner.textContent = '✓ Awesome! That\'s correct!';
+            } else if (selectedOption === q.correct) {
+                options[selectedOption].classList.add('correct');
+                resultBanner.className = 'result-banner correct';
+                resultBanner.textContent = '✓ Awesome! That\'s correct!';
+            } else {
+                options[selectedOption].classList.add('incorrect');
+                options[q.correct].classList.add('correct');
+                resultBanner.className = 'result-banner incorrect';
+                resultBanner.textContent = '✗ Oops! The correct answer is highlighted.';
+            }
+
+            checkButton.textContent = 'CONTINUE';
+            checkButton.disabled = false;
+        }
+
+        checkButton.onclick = () => {
+            if (checkButton.textContent === 'CHECK') {
+                checkAnswer();
+            } else {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                } else {
+                    showCelebration();
+                }
+            }
+        };
+
+        function showFinaleScreen() {
+            gameContent.classList.add('hidden');
+            header.classList.add('hidden');
+
+            // Turn background black
+            document.body.classList.add('finale-active');
+
+            finaleScreen.classList.remove('hidden');
+            finaleScreen.classList.add('fade-in');
+
+            // Play the finale video
+            finaleVideo.play().catch(err => console.log('Video play failed:', err));
+
+            // After 8 seconds, fade out video and show the burger image with dramatic entrance
+            setTimeout(() => {
+                finaleVideo.classList.add('fade-video');
+                burgerImage.classList.add('show');
+
+                // After animation completes, add pulse effect
+                setTimeout(() => {
+                    burgerImage.classList.add('pulse');
+                }, 2000);
+
+                // After another 5 seconds (to enjoy the burger), transition to RSVP
+                setTimeout(() => {
+                    finaleScreen.classList.add('fade-out');
+
+                    setTimeout(() => {
+                        finaleScreen.classList.add('hidden');
+                        finaleScreen.classList.remove('fade-in', 'fade-out');
+                        document.body.classList.remove('finale-active');
+                        celebration.classList.remove('hidden');
+                        celebration.classList.add('fade-in');
+
+                        setTimeout(() => {
+                            celebration.classList.remove('fade-in');
+                        }, 1000);
+                    }, 1000);
+                }, 5000);
+            }, 8000);
+        }
+
+        function showCelebration() {
+            gameContent.classList.add('hidden');
+            celebration.classList.remove('hidden');
+        }
+
+        // Replay button handler
+        replayButton.onclick = () => {
+            if (currentAudio) {
+                currentAudio.currentTime = 0;
+                currentAudio.play().catch(err => console.log('Audio play failed:', err));
+            }
+        };
+
+        // Create and try to play invited sound
+        const invitedSound = new Audio('sounds/Invited.mp3');
+        let soundPlayed = false;
+
+        // Try to autoplay when page loads
+        window.addEventListener('load', () => {
+            invitedSound.play().then(() => {
+                soundPlayed = true;
+            }).catch(err => {
+                // Browser blocked autoplay, will play on user interaction
+                console.log('Audio autoplay blocked, will play on interaction');
+            });
+        });
+
+        // Play sound on any click if not yet played
+        document.addEventListener('click', () => {
+            if (!soundPlayed) {
+                invitedSound.play().then(() => {
+                    soundPlayed = true;
+                }).catch(err => console.log('Audio play failed:', err));
+            }
+        }, { once: true });
+
+        beginButton.onclick = () => {
+            // If sound hasn't played yet, it will play now, so wait 4 seconds
+            // If sound already played, advance immediately
+            const delay = soundPlayed ? 0 : 4000;
+
+            // Wait for delay if needed, then fade out and show game content
+            setTimeout(() => {
+                openingScreen.classList.add('fade-out');
+
+                // After 1 second fade out, hide and show next screen
+                setTimeout(() => {
+                    openingScreen.classList.add('hidden');
+                    openingScreen.classList.remove('fade-out');
+                    header.classList.remove('hidden');
+                    gameContent.classList.remove('hidden');
+                    header.classList.add('fade-in');
+                    gameContent.classList.add('fade-in');
+                    loadQuestion();
+
+                    // Clean up fade-in class after animation
+                    setTimeout(() => {
+                        header.classList.remove('fade-in');
+                        gameContent.classList.remove('fade-in');
+                    }, 1000);
+                }, 1000);
+            }, delay);
+        };
+
+        // Handle RSVP form submission
+        const rsvpForm = document.getElementById('rsvpForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        rsvpForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Collect form data
+            const formData = {
+                name: document.getElementById('guestName').value,
+                leatherBBQ: document.getElementById('leatherBBQ').checked,
+                familyBBQ: document.getElementById('familyBBQ').checked,
+                extraGuests: document.getElementById('extraGuests').value,
+                dietary: document.getElementById('dietary').value
+            };
+
+            // Validate that at least one date is selected
+            if (!formData.leatherBBQ && !formData.familyBBQ) {
+                errorMessage.textContent = TEXT_CONFIG.rsvp.errorMessage;
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Hide error message if validation passes
+            errorMessage.style.display = 'none';
+
+            // Determine subject based on selections
+            let subject;
+            if (formData.leatherBBQ && formData.familyBBQ) {
+                subject = TEXT_CONFIG.email.subjectBoth;
+            } else if (formData.leatherBBQ) {
+                subject = TEXT_CONFIG.email.subjectLeather;
+            } else if (formData.familyBBQ) {
+                subject = TEXT_CONFIG.email.subjectFamily;
+            } else {
+                subject = TEXT_CONFIG.email.subjectDefault;
+            }
+
+            // Build email body
+            let emailBody = `RSVP Response:\n\n`;
+            emailBody += `Name: ${formData.name || '<Empty>'}\n\n`;
+            emailBody += `Attending Dates:\n`;
+            emailBody += `- Leather BBQ (18 July 2026): ${formData.leatherBBQ ? 'Yes' : 'No'}\n`;
+            emailBody += `- Friends and Family BBQ (25 July 2026): ${formData.familyBBQ ? 'Yes' : 'No'}\n\n`;
+            emailBody += `Number of Guests: ${formData.extraGuests || '<Empty>'}\n\n`;
+            emailBody += `Dietary Requirements: ${formData.dietary || '<Empty>'}\n`;
+
+            // Create mailto link
+            const mailtoLink = `mailto:${TEXT_CONFIG.email.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+
+            // Open in new window/tab
+            window.open(mailtoLink, '_blank');
+
+            // Download calendar file based on selection
+            let icsFile;
+            if (formData.leatherBBQ && formData.familyBBQ) {
+                icsFile = 'BothBBQ.ics';
+            } else if (formData.leatherBBQ) {
+                icsFile = 'LeatherBBQ.ics';
+            } else {
+                icsFile = 'SummerBBQ.ics';
+            }
+            window.open(icsFile, '_self');
+        });
+
+        // Game starts when user clicks Begin Challenge button
+    </script>
+</body>
+</html>
